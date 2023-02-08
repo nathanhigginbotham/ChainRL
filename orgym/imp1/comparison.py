@@ -3,9 +3,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-
-
-
 ppo_train = pd.read_csv('ppo/logs/ppo_train_results.csv')
 sac_train = pd.read_csv('sac/logs/sac_train_results.csv')
 
