@@ -1,1 +1,0 @@
-{'n_steps': 25, 'batch_size': 5, 'policy_kwargs': {'net_arch': {'pi': [16], 'vf': [8]}, 'activation_fn': <class 'torch.nn.modules.activation.Tanh'>, 'ortho_init': True}}
