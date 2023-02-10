@@ -89,9 +89,10 @@ class EvalModel:
         ax2 = ax1.twinx()
         
         ax1.fill_between(x, upper_cumrewards, lower_cumrewards, color='dodgerblue', alpha=0.4)
-        ax1.plot(x, cumrewards, color='dodgerblue', label='Cumlative Reward')
+        lns1 = ax1.plot(x, cumrewards, color='dodgerblue', label='Cumlative Reward')
+        
         ax2.fill_between(x, upper_rewards, lower_rewards, color='orange', alpha=0.4)
-        ax2.plot(x, mean_rewards, color='orange', label='Daily Reward')
+        lns2 = ax2.plot(x, mean_rewards, color='orange', label='Daily Reward')
 
         ax1.set_title('Cumlative and Daily Rewards')
         ax1.set_ylabel('Cumlative reward')
@@ -99,8 +100,16 @@ class EvalModel:
         ax1.set_xlabel('Day')
         ax1.spines['top'].set_visible(False)
         ax2.spines['top'].set_visible(False)
-        ax1.legend()
-        ax2.legend()
+        
+        
+        # ax1.legend()
+        # ax2.legend()
+
+        lns = lns1+lns2
+        labs = [l.get_label() for l in lns]
+        ax1.legend(lns,labs, loc=1)
+
+
 
         if filepath != None:
             plt.savefig(filepath)
