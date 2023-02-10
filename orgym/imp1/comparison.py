@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-
+        
         
 def eval_comparison(ppo_eval, sac_eval, filepath=None):
     '''
@@ -13,14 +13,14 @@ def eval_comparison(ppo_eval, sac_eval, filepath=None):
     x = np.linspace(1, len(ppo_eval['mean_rewards']), len(ppo_eval['mean_rewards']))
 
     ax1.fill_between(x, ppo_eval['cumlative_upper_rewards'], ppo_eval['cumlative_lower_rewards'], color='dodgerblue', alpha=0.4)
-    ax1.plot(x, ppo_eval['cumlative_rewards'], color='dodgerblue', label='PPO Cumlative Reward')
+    lns1 = ax1.plot(x, ppo_eval['cumlative_rewards'], color='dodgerblue', label='PPO Cumlative Reward')
     ax2.fill_between(x, ppo_eval['upper_rewards'], ppo_eval['lower_rewards'], color='orange', alpha=0.4)
-    ax2.plot(x, ppo_eval['mean_rewards'], color='orange', label='PPO Daily Reward')
+    lns2 = ax2.plot(x, ppo_eval['mean_rewards'], color='orange', label='PPO Daily Reward')
 
     ax1.fill_between(x, sac_eval['cumlative_upper_rewards'], sac_eval['cumlative_lower_rewards'], color='red', alpha=0.4)
-    ax1.plot(x, sac_eval['cumlative_rewards'], color='red', label='SAC Cumlative Reward')
+    lns3 = ax1.plot(x, sac_eval['cumlative_rewards'], color='red', label='SAC Cumlative Reward')
     ax2.fill_between(x, sac_eval['upper_rewards'], sac_eval['lower_rewards'], color='limegreen', alpha=0.4)
-    ax2.plot(x, sac_eval['mean_rewards'], color='limegreen', label='SAC Daily Reward')
+    lns4 = ax2.plot(x, sac_eval['mean_rewards'], color='limegreen', label='SAC Daily Reward')
 
     ax1.set_title('Comparison of Cumlative and Daily Rewards')
     ax1.set_ylabel('Cumlative reward')
@@ -28,8 +28,13 @@ def eval_comparison(ppo_eval, sac_eval, filepath=None):
     ax1.set_xlabel('Day')
     ax1.spines['top'].set_visible(False)
     ax2.spines['top'].set_visible(False)
-    ax1.legend()
-    ax2.legend()
+    
+    lns = lns1+lns2+lns3+lns4
+    labs = [l.get_label() for l in lns]
+    ax1.legend(lns,labs, loc=9)
+    
+    # ax1.legend(loc=1)
+    # ax2.legend(loc=0)
 
     if filepath != None:
         plt.savefig(filepath)
