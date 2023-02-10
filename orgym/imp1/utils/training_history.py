@@ -8,8 +8,6 @@ class History:
         self.filepath = filepath
 
         
-        
-        
         data = pd.read_csv(filepath, names=['r','l','t'])
         self.data = data.drop(data.index[0:2])
         self.rewards = np.array(self.data['r']).astype(float)
