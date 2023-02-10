@@ -48,6 +48,8 @@ def train_comparison(ppo_train, sac_train, filepath=None):
     '''
     train comparisons maybe needs to be turned into a loop too
     '''
+    
+    
     fig, ax = plt.subplots(figsize=(10,4))
     ax.plot(ppo_train['episodes'][2::3], ppo_train['rewards'][2::3], '-', linewidth=0.5, color='dodgerblue')
     ax.plot(sac_train['episodes'][2::3], sac_train['rewards'][2::3], '-', linewidth=0.5, color='orange')
@@ -79,6 +81,8 @@ def PlotAll(alg_strings):
     '''
     Function to plot the cumulative reward for all 7 algorithms. Or any number. Just input a list of strings.
     '''
+    
+    
     fig, axs = plt.subplots(4, 2, figsize=(15,8), squeeze=False, sharex=True, sharey=True)
     fig.delaxes(axs[3,1])
     
@@ -96,17 +100,20 @@ def PlotAll(alg_strings):
         else: 
             i = i-4
             axes = axs[i,1]
+            i = i+4
             axes.plot(x, eval_frames[i]['cumlative_rewards'], color=colours[i], label=alg_strings[i])
             axes.fill_between(x, eval_frames[i]['cumlative_upper_rewards'], eval_frames[i]['cumlative_lower_rewards'], color=colours[i], alpha=0.4)
             
                 
-    fig.legend(bbox_to_anchor=(0.88,0.27), ncol=3, fontsize = 'xx-large')
+    fig.legend(bbox_to_anchor=(0.89,0.27), ncol=3, fontsize = 'x-large')
+    
+    filepath = os.getcwd() #### FIX THIS
+    
+    
+    plt.rcParams['savefig.dpi'] = 900
+    plt.savefig(filepath)
+    
     plt.show()
-    
-    
-    
-    
-    # for 
     
     
     
@@ -152,9 +159,9 @@ def PlotAll(alg_strings):
 
 if __name__ == '__main__':
 
-    #alg_strings = ["SAC", "A2C", "PPO", "ARS", "RecurrentPPO", "TQC", "TRPO"] # Strings of Algorithms
+    alg_strings = ["SAC", "A2C", "PPO", "ARS", "RecurrentPPO", "TQC", "TRPO"] # Strings of Algorithms
 
-    alg_strings = ["ppo", "sac","ppo", "sac","ppo", "sac","sac" ]
+    #alg_strings = ["ppo", "sac","ppo", "sac","ppo", "sac","sac" ]
     
     train_frames = []
     eval_frames = []    
@@ -162,13 +169,18 @@ if __name__ == '__main__':
     
     
     logdir = '/nb_logs/'
-    main_path = os.getcwd()
+    #main_path = os.getcwd()
+    main_path = '/Users/nathan/Documents/GitHub/ChainRL'
     
+    
+    plt.rcParams['savefig.dpi'] = 900
+    
+    plt.style.use('seaborn-darkgrid')
     
     
     for i in alg_strings:
-        train_frames.append(pd.readcsv(main_path + logdir + i + '_train_results.csv'))
-        eval_frames.append(pd.readcsv(main_path + logdir + i + '_eval_results.csv'))
+        train_frames.append(pd.read_csv(main_path + logdir + i + '_train_results.csv'))
+        eval_frames.append(pd.read_csv(main_path + logdir + i + '_eval_results.csv'))
  
     
     # for i in alg_strings:
@@ -176,7 +188,7 @@ if __name__ == '__main__':
     #     eval_frames.append(pd.read_csv(i + '/logs/' + i +'_eval_results.csv'))
         
     PlotAll(alg_strings)
-        
+    
         
     
         
