@@ -4,13 +4,16 @@ import pandas as pd
 import os
         
         
-def eval_comparison(ppo_eval, sac_eval, filepath=None):
+def eval_comparison(alg_1, alg_2, filepath=None):
     '''
     Probably should change into some kind of loop when
     we want more algorithms
     '''
     fig, ax1 = plt.subplots(figsize=(15,8))
     ax2 = ax1.twinx()
+    
+    
+    
     x = np.linspace(1, len(ppo_eval['mean_rewards']), len(ppo_eval['mean_rewards']))
 
     ax1.fill_between(x, ppo_eval['cumlative_upper_rewards'], ppo_eval['cumlative_lower_rewards'], color='dodgerblue', alpha=0.4)
@@ -76,19 +79,23 @@ def train_time(ppo_train, sac_train,):
     plt.show()
 
 
-def PlotAll(alg_strings):
+def PlotAll(alg_strings, filepath):
     
     '''
     Function to plot the cumulative reward for all 7 algorithms. Or any number. Just input a list of strings.
     '''
     
     
-    fig, axs = plt.subplots(4, 2, figsize=(15,8), squeeze=False, sharex=True, sharey=True)
+    fig, axs = plt.subplots(4, 2, figsize=(15,8), squeeze=False, sharex=False, sharey=False)
     fig.delaxes(axs[3,1])
     
     x = np.linspace(1, len(eval_frames[0]['cumlative_rewards']), len(eval_frames[0]['cumlative_rewards']))
     
     colours = ['dodgerblue', 'salmon', 'forestgreen', 'crimson', 'orange', 'darkviolet', 'hotpink']
+    
+    first = axs[0,0]
+    first.set_ylabel("Cumulative Reward (Profit)")
+    first.yaxis.set_label_coords(-.1, -1.5)
     
     
     for i, alg in enumerate(alg_strings):
@@ -103,12 +110,17 @@ def PlotAll(alg_strings):
             i = i+4
             axes.plot(x, eval_frames[i]['cumlative_rewards'], color=colours[i], label=alg_strings[i])
             axes.fill_between(x, eval_frames[i]['cumlative_upper_rewards'], eval_frames[i]['cumlative_lower_rewards'], color=colours[i], alpha=0.4)
-            
+    
+    
+    
                 
     fig.legend(bbox_to_anchor=(0.89,0.27), ncol=3, fontsize = 'x-large')
     
     filepath = os.getcwd() #### FIX THIS
     
+    
+    
+    plt.xlabel("Day")
     
     plt.rcParams['savefig.dpi'] = 900
     plt.savefig(filepath)
@@ -152,6 +164,38 @@ def PlotAll(alg_strings):
     #     plt.show()
     
     
+def TriplePlot(alg_strings, colours,filepath):
+    
+    '''
+    Function to plot the cumulative reward for 3 algorithms. Or any number. Just input a list of strings.
+    '''
+    
+    
+    plt.figure(figsize=(15,8))
+    
+    x = np.linspace(1, len(eval_frames[0]['cumlative_rewards']), len(eval_frames[0]['cumlative_rewards']))
+    
+    plt.xlabel("Day")
+    plt.ylabel("Cumulative Reward (Profit)")
+    
+    for i in range(len(alg_strings)):
+        plt.plot(x, eval_frames[i]['cumlative_rewards'], color=colours[i], label=alg_strings[i])
+        plt.fill_between(x, eval_frames[i]['cumlative_upper_rewards'], eval_frames[i]['cumlative_lower_rewards'], color=colours[i], alpha=0.4)
+    
+    
+    plt.legend(ncol=3, fontsize = 'x-large')
+                
+    #fig.legend(bbox_to_anchor=(0.89,0.27), ncol=3, fontsize = 'x-large')
+    
+    filepath = os.getcwd() #### FIX THIS
+    
+    
+    plt.xlabel("Day")
+    
+    plt.rcParams['savefig.dpi'] = 900
+    plt.savefig(filepath + 'triplecomp.png')
+    
+    plt.show()
     
     
     
@@ -159,16 +203,26 @@ def PlotAll(alg_strings):
 
 if __name__ == '__main__':
 
-    alg_strings = ["SAC", "A2C", "PPO", "ARS", "RecurrentPPO", "TQC", "TRPO"] # Strings of Algorithms
+    
+    
+    # alg_strings = ["SAC", "A2C", "PPO", "ARS", "RecurrentPPO", "TQC", "TRPO"] # Strings of All Algorithms -> Use PlotAll
 
-    #alg_strings = ["ppo", "sac","ppo", "sac","ppo", "sac","sac" ]
+
+    # colours = ['dodgerblue', 'salmon', 'forestgreen', 'crimson', 'orange', 'darkviolet', 'hotpink'] # for consistency
     
+    
+    alg_strings = ["ARS", "RecurrentPPO", "TRPO"]
+    colours = ['crimson', 'orange', 'hotpink'] # for consistency
+
+    
+
+
     train_frames = []
-    eval_frames = []    
+    eval_frames = []
     
     
     
-    logdir = '/nb_logs/'
+    logdir = '/net_nb_logs/'
     #main_path = os.getcwd()
     main_path = '/Users/nathan/Documents/GitHub/ChainRL'
     
@@ -177,26 +231,13 @@ if __name__ == '__main__':
     
     plt.style.use('seaborn-darkgrid')
     
-    
     for i in alg_strings:
         train_frames.append(pd.read_csv(main_path + logdir + i + '_train_results.csv'))
         eval_frames.append(pd.read_csv(main_path + logdir + i + '_eval_results.csv'))
  
     
-    # for i in alg_strings:
-    #     train_frames.append(pd.read_csv(i + '/logs/' + i +'_train_results.csv'))
-    #     eval_frames.append(pd.read_csv(i + '/logs/' + i +'_eval_results.csv'))
-        
-    PlotAll(alg_strings)
     
-        
     
-        
-    # ppo_train = pd.read_csv('ppo/logs/ppo_train_results.csv')
-    # ppo_eval = pd.read_csv('ppo/logs/ppo_eval_results.csv')
-    # sac_train = pd.read_csv('sac/logs/sac_train_results.csv')
-    # sac_eval = pd.read_csv('sac/logs/sac_eval_results.csv')
-
-    # eval_comparison(ppo_eval, sac_eval, 'comparison_figures/eval_comparison.png') 
-    # train_comparison(ppo_train, sac_train, 'comparison_figures/train_comparison.png')
-    # train_time(ppo_train, sac_train)
+    TriplePlot(alg_strings=alg_strings, colours=colours, filepath=logdir)
+    #PlotAll(alg_strings, logdir)
+    
