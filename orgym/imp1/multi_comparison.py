@@ -122,8 +122,8 @@ def PlotAll(alg_strings, filepath):
     
     plt.xlabel("Day")
     
-    plt.rcParams['savefig.dpi'] = 900
-    plt.savefig(filepath)
+    plt.rcParams['savefig.dpi'] = 256
+    plt.savefig(filepath +'/best_algs.pdf')
     
     plt.show()
     
@@ -205,14 +205,14 @@ if __name__ == '__main__':
 
     
     
-    # alg_strings = ["SAC", "A2C", "PPO", "ARS", "RecurrentPPO", "TQC", "TRPO"] # Strings of All Algorithms -> Use PlotAll
+    alg_strings = ["SAC", "A2C", "PPO", "ARS", "RecurrentPPO", "TQC", "TRPO"] # Strings of All Algorithms -> Use PlotAll
 
 
-    # colours = ['dodgerblue', 'salmon', 'forestgreen', 'crimson', 'orange', 'darkviolet', 'hotpink'] # for consistency
+    colours = ['dodgerblue', 'salmon', 'forestgreen', 'crimson', 'orange', 'darkviolet', 'hotpink'] # for consistency
     
     
-    alg_strings = ["ARS", "RecurrentPPO", "TRPO"]
-    colours = ['crimson', 'orange', 'hotpink'] # for consistency
+    # alg_strings = ["ARS", "RecurrentPPO", "TRPO"]
+    # colours = ['crimson', 'orange', 'hotpink'] # for consistency
 
     
 
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     main_path = '/Users/nathan/Documents/GitHub/ChainRL'
     
     
-    plt.rcParams['savefig.dpi'] = 900
+    plt.rcParams['savefig.dpi'] = 256
     
     plt.style.use('seaborn-darkgrid')
     
@@ -238,6 +238,6 @@ if __name__ == '__main__':
     
     
     
-    TriplePlot(alg_strings=alg_strings, colours=colours, filepath=logdir)
-    #PlotAll(alg_strings, logdir)
+    #TriplePlot(alg_strings=alg_strings, colours=colours, filepath=logdir)
+    PlotAll(alg_strings, logdir)
     
