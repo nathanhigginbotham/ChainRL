@@ -95,8 +95,14 @@ def CreateEnv(env_string=None, env_seed=42, **kwargs):
     
     env = environment_dictionary[env_string][0]
     
-    env = or_gym.make(env, seed_int=env_seed)
+    if environment_dictionary[env_string][1] != None:
+        no_periods = environment_dictionary[env_string][1]
+        
+        env = or_gym.make(env, seed_int=env_seed, num_episodes=no_periods)
+        
+        return env
     
+    env = or_gym.make(env, seed_int=env_seed)
     
     return env
 
@@ -119,8 +125,27 @@ def CreateModel(alg_string=None, env=None, **kwargs):
     
     return model
 
+def GetFilePath(env_string=None, model_string=None, hyper_string='default', **kwargs):
+    """ Creates a filepath based on the environment, model and hyperparameters passed as arguments
 
-def Callback(env=None, env_string=None, model_string=None, hyper_string='default', eval_freq=10e3, **kwargs):
+    Args:
+        env_string (str): Environment to be used. Defaults to None.
+        model_string (str): Model to be used. Defaults to None.
+        hyper_string (str): Hyperparameters to be used. Defaults to 'default'.
+
+    Returns:
+        _type_: _description_
+    """
+    
+    if hyper_string == 'default':
+        filepath = './Environments/' + env_string + '/' + model_string + '/default/'
+    
+    if hyper_string == 'tuned':
+        filepath = './Environments/' + env_string + '/' + model_string + '/tuned/'
+    
+    return filepath
+
+def GetCallback(env=None, env_string=None, model_string=None, hyper_string='default',filepath=None, eval_freq=10e3, **kwargs):
     """_summary_
 
     Args:
@@ -134,37 +159,30 @@ def Callback(env=None, env_string=None, model_string=None, hyper_string='default
         EvalCallback: Callback to be used during training
     """
     
-    if hyper_string == 'default':
-        filepath = './Environments/' + env_string + '/' + model_string + '/default'
-    
-    if hyper_string == 'tuned':
-        filepath = './Environments/' + env_string + '/' + model_string + '/tuned'
-    
-    
     return EvalCallback(env, best_model_save_path=filepath, log_path=filepath, 
                                 eval_freq=eval_freq, deterministic=True, render=False, verbose=1)
 
 
-def CreateMonitor(env=None, env_string=None, model_string=None, hyper_string='default', **kwargs):
-    """ Creates a monitor to be used during training
+# def CreateMonitor(env=None, env_string=None, model_string=None, hyper_string='default', **kwargs):
+#     """ Creates a monitor to be used during training
 
-    Args:
-        env (Gym Environment):  Environment to be used. Defaults to None.
-        env_string (str):  Name of Environment to be used. Defaults to None.
-        model_string (str):  Name of Model to be used. Defaults to None.
-        hyper_string (str): Name of Hyperparameters to be used. Defaults to 'default'.
+#     Args:
+#         env (Gym Environment):  Environment to be used. Defaults to None.
+#         env_string (str):  Name of Environment to be used. Defaults to None.
+#         model_string (str):  Name of Model to be used. Defaults to None.
+#         hyper_string (str): Name of Hyperparameters to be used. Defaults to 'default'.
 
-    Returns:
-        _type_: _description_
-    """
+#     Returns:
+#         _type_: _description_
+#     """
     
-    if hyper_string == 'default':
-        filepath = './Environments/' + env_string + '/' + model_string + '/default'
+#     if hyper_string == 'default':
+#         filepath = './Environments/' + env_string + '/' + model_string + '/default/'
     
-    if hyper_string == 'tuned':
-        filepath = './Environments/' + env_string + '/' + model_string + '/tuned'
+#     if hyper_string == 'tuned':
+#         filepath = './Environments/' + env_string + '/' + model_string + '/tuned/'
     
-    return Monitor(env, filepath, allow_early_resets=True)
+#     return Monitor(env, filepath, allow_early_resets=True)
 
 
 def TrainModel(model=None, env=None, total_timesteps=10e3, callback=None, **kwargs): 
@@ -195,18 +213,20 @@ def RunScript(env_string=None, alg_string=None, hyper_string=None, total_timeste
         _type_: _description_
     """
     
+    # Gets the correct filepath for the model's training results
+    filepath = GetFilePath(env_string, alg_string, hyper_string)
+    
     # Create environment
     env = CreateEnv(env_string)
     
-    env = CreateMonitor(env, env_string, alg_string, hyper_string, **kwargs)
-    
-    #env = Monitor(env, filename=filepath) 
+    # env = CreateMonitor(env, env_string, alg_string, hyper_string, **kwargs)
+    env = Monitor(env, filename=filepath) 
     
     # Create model
     model = CreateModel(alg_string, env, **kwargs)
     
     # Create callback
-    callback = Callback(env, env_string, alg_string, hyper_string, **kwargs)
+    callback = GetCallback(env, env_string, alg_string, hyper_string, filepath, **kwargs)
     
     # Train model
     model = TrainModel(model, env, total_timesteps, callback=callback, **kwargs)
