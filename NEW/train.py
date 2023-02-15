@@ -25,7 +25,13 @@ How do I use it?
     - It may be ran from both the command line and a jupyter notebook. Often it makes sense for it to be ran via the command line
     
     Via Command Line:
-        - Still a work in progress to get flags set up, but for now you can just change the parameters in the main function.
+        - The script can be ran from the command line using the following command:
+        
+        `python train.py --algo PPO --env IM1 --time 5e5` [To run for 500,000 timesteps on InvManagement-v1 with PPO]
+
+        `python train.py --algo [ALGORITHM KEY] --env [ENVIRONMENT KEY] --time [NUMBER OF TIMESTEPS]` 
+        [To run for [NUMBER OF TIMESTEPS] timesteps on [ENVIRONMENT KEY] with [ALGORITHM KEY]]
+    
     
     Via Jupyter Notebook:
         - Its probably best to import train.py as a module, and then call the functions from there.
@@ -37,7 +43,7 @@ How it works:
     - It will generate an environment
     - Then it will generate a model
     - Then the callback will be generated
-    - Then the model will be trained and saved
+    - Then the model will be trained and saved to the respective directory given by the environment and algorithm keys.
 
 
     
@@ -49,10 +55,10 @@ What does it do?
     EXAMPLE:
     
     If we were training a default PPO model in the InvManagement-v1 environment, the model would be saved in
-    -> Environments -> InvManagement-v0 -> PPO -> -> default -> model.zip
+    -> Environments -> IM1 -> PPO -> -> default -> model.zip
 
     If we were training a tuned A2C model in the NetworkManagement-v0 environment, the model would be saved in
-    -> Environment -> NetworkManagement-v0 -> A2C -> tuned -> model.zip
+    -> Environment -> NET0 -> A2C -> tuned -> model.zip
 
 
 """
@@ -69,11 +75,11 @@ def parse_args():
         help='Key of algorithm to be used')
     parser.add_argument('--env', type=str, default='IM1', 
         help='Key of environment to be used')
+    parser.add_argument('--time', type=int, default=5e5, 
+        help='Number of timesteps to train for')
     
     args = parser.parse_args()
     return args
-
-
 
 
 
@@ -139,6 +145,28 @@ def Callback(env=None, env_string=None, model_string=None, hyper_string='default
                                 eval_freq=eval_freq, deterministic=True, render=False, verbose=1)
 
 
+def CreateMonitor(env=None, env_string=None, model_string=None, hyper_string='default', **kwargs):
+    """ Creates a monitor to be used during training
+
+    Args:
+        env (Gym Environment):  Environment to be used. Defaults to None.
+        env_string (str):  Name of Environment to be used. Defaults to None.
+        model_string (str):  Name of Model to be used. Defaults to None.
+        hyper_string (str): Name of Hyperparameters to be used. Defaults to 'default'.
+
+    Returns:
+        _type_: _description_
+    """
+    
+    if hyper_string == 'default':
+        filepath = './Environments/' + env_string + '/' + model_string + '/default'
+    
+    if hyper_string == 'tuned':
+        filepath = './Environments/' + env_string + '/' + model_string + '/tuned'
+    
+    return Monitor(env, filepath, allow_early_resets=True)
+
+
 def TrainModel(model=None, env=None, total_timesteps=10e3, callback=None, **kwargs): 
     """ Trains a model based on an algorithm, environment and hyperparameters passed as arguments.
 
@@ -153,10 +181,9 @@ def TrainModel(model=None, env=None, total_timesteps=10e3, callback=None, **kwar
     model.learn(total_timesteps, callback, progress_bar=True, **kwargs)
     
     return model
+ 
 
-    
-
-def RunScript(env_string=None, alg_string=None, hyper_string=None, filepath=None, **kwargs):
+def RunScript(env_string=None, alg_string=None, hyper_string=None, total_timesteps=None, **kwargs):
     """ Runs the script
 
     Args:
@@ -171,9 +198,9 @@ def RunScript(env_string=None, alg_string=None, hyper_string=None, filepath=None
     # Create environment
     env = CreateEnv(env_string)
     
+    env = CreateMonitor(env, env_string, alg_string, hyper_string, **kwargs)
     
-    
-    env = Monitor(env, filename=filepath) 
+    #env = Monitor(env, filename=filepath) 
     
     # Create model
     model = CreateModel(alg_string, env, **kwargs)
@@ -182,12 +209,9 @@ def RunScript(env_string=None, alg_string=None, hyper_string=None, filepath=None
     callback = Callback(env, env_string, alg_string, hyper_string, **kwargs)
     
     # Train model
-    model = TrainModel(model, env, callback=callback, **kwargs)
+    model = TrainModel(model, env, total_timesteps, callback=callback, **kwargs)
     
     return model
-
-
-
 
 
 
@@ -196,9 +220,13 @@ if __name__ == '__main__':
     
     args = parse_args()
     
-    filepath = './Environments/' + args.env + '/' + args.algo + '/default'
     
+    ##### This filepath needs to be changed to be more dynamic
+    ##### It needs to be generated from if the model is tuned or not.
+    ##### It is defined here purely for the purposes of the monitor.
+    ##### The evalcallback is already set up to save the model in the correct directory.
     
+   #filepath = './Environments/' + args.env + '/' + args.algo + '/default'
     
     # env_string = environment_dictionary['NET1']
     # alg_string = algorithm_dictionary['ARS']
@@ -208,8 +236,7 @@ if __name__ == '__main__':
     # hyper_string = something
     
     
-    RunScript(args.env, args.algo, hyper_string='default', filepath=filepath)
-    
+    RunScript(args.env, args.algo, hyper_string='default', total_timesteps=args.time)
     
     
     print('0')
