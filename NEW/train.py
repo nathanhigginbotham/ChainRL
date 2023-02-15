@@ -14,6 +14,12 @@ from stable_baselines3.common.env_util import make_vec_env
 from dictionary import algorithm_dictionary # This is a dictionary with the algorithms and their parameters
 from dictionary import environment_dictionary # This is a dictionary with the environments and their parameters
 
+from utils import GetFilePath # Gets file path from environment, model and hyperparameters
+
+from utils import CreateEnv # Creates an environment based on an environment string passed as argument
+
+
+
 # from tuned_params import tuned_params # This is a dictionary with the tuned parameters for each algorithm
 
 
@@ -83,30 +89,6 @@ def parse_args():
 
 
 
-def CreateEnv(env_string=None, env_seed=42, **kwargs): 
-    """ Creates an environment based on an environment string passed as argument
-
-    Args:
-        env_string (str): Environment to be used. Defaults to None.
-
-    Returns:
-        _type_: _description_
-    """
-    
-    env = environment_dictionary[env_string][0]
-    
-    if environment_dictionary[env_string][1] != None:
-        no_periods = environment_dictionary[env_string][1]
-        
-        env = or_gym.make(env, seed_int=env_seed, num_episodes=no_periods)
-        
-        return env
-    
-    env = or_gym.make(env, seed_int=env_seed)
-    
-    return env
-
-
 def CreateModel(alg_string=None, env=None, **kwargs): 
     """ Creates a model based on an algorithm, environment and hyperparameters passed as arguments
 
@@ -124,26 +106,6 @@ def CreateModel(alg_string=None, env=None, **kwargs):
     model = alg(pol, env, **kwargs)
     
     return model
-
-def GetFilePath(env_string=None, model_string=None, hyper_string='default', **kwargs):
-    """ Creates a filepath based on the environment, model and hyperparameters passed as arguments
-
-    Args:
-        env_string (str): Environment to be used. Defaults to None.
-        model_string (str): Model to be used. Defaults to None.
-        hyper_string (str): Hyperparameters to be used. Defaults to 'default'.
-
-    Returns:
-        _type_: _description_
-    """
-    
-    if hyper_string == 'default':
-        filepath = './Environments/' + env_string + '/' + model_string + '/default/'
-    
-    if hyper_string == 'tuned':
-        filepath = './Environments/' + env_string + '/' + model_string + '/tuned/'
-    
-    return filepath
 
 def GetCallback(env=None, env_string=None, model_string=None, hyper_string='default',filepath=None, eval_freq=10e3, **kwargs):
     """_summary_
