@@ -25,7 +25,13 @@ How do I use it?
     - It may be ran from both the command line and a jupyter notebook. Often it makes sense for it to be ran via the command line
     
     Via Command Line:
-        - Still a work in progress to get flags set up, but for now you can just change the parameters in the main function.
+        - The script can be ran from the command line using the following command:
+        
+        `python train.py --algo PPO --env IM1 --time 5e5` [To run for 500,000 timesteps on InvManagement-v1 with PPO]
+
+        `python train.py --algo [ALGORITHM KEY] --env [ENVIRONMENT KEY] --time [NUMBER OF TIMESTEPS]` 
+        [To run for [NUMBER OF TIMESTEPS] timesteps on [ENVIRONMENT KEY] with [ALGORITHM KEY]]
+    
     
     Via Jupyter Notebook:
         - Its probably best to import train.py as a module, and then call the functions from there.
@@ -37,7 +43,7 @@ How it works:
     - It will generate an environment
     - Then it will generate a model
     - Then the callback will be generated
-    - Then the model will be trained and saved
+    - Then the model will be trained and saved to the respective directory given by the environment and algorithm keys.
 
 
     
@@ -69,11 +75,11 @@ def parse_args():
         help='Key of algorithm to be used')
     parser.add_argument('--env', type=str, default='IM1', 
         help='Key of environment to be used')
+    parser.add_argument('--time', type=int, default=5e5, 
+        help='Number of timesteps to train for')
     
     args = parser.parse_args()
     return args
-
-
 
 
 
@@ -153,10 +159,9 @@ def TrainModel(model=None, env=None, total_timesteps=10e3, callback=None, **kwar
     model.learn(total_timesteps, callback, progress_bar=True, **kwargs)
     
     return model
+ 
 
-    
-
-def RunScript(env_string=None, alg_string=None, hyper_string=None, filepath=None, **kwargs):
+def RunScript(env_string=None, alg_string=None, hyper_string=None, total_timesteps=None, filepath=None, **kwargs):
     """ Runs the script
 
     Args:
@@ -182,7 +187,7 @@ def RunScript(env_string=None, alg_string=None, hyper_string=None, filepath=None
     callback = Callback(env, env_string, alg_string, hyper_string, **kwargs)
     
     # Train model
-    model = TrainModel(model, env, callback=callback, **kwargs)
+    model = TrainModel(model, env, total_timesteps, callback=callback, **kwargs)
     
     return model
 
@@ -198,8 +203,6 @@ if __name__ == '__main__':
     
     filepath = './Environments/' + args.env + '/' + args.algo + '/default'
     
-    
-    
     # env_string = environment_dictionary['NET1']
     # alg_string = algorithm_dictionary['ARS']
     
@@ -208,8 +211,7 @@ if __name__ == '__main__':
     # hyper_string = something
     
     
-    RunScript(args.env, args.algo, hyper_string='default', filepath=filepath)
-    
+    RunScript(args.env, args.algo, hyper_string='default', total_timesteps=args.time,  filepath=filepath)
     
     
     print('0')
