@@ -55,10 +55,10 @@ The structure so far is as follows:
 
 import or_gym
 
-environment_dictionary = {'IM0'   : ["InvManagement-v0"],
-             'IM1'   : ["InvManagement-v1"],
-             'NET0' : ["NetworkManagement-v0"],
-             'NET1' : ["NetworkManagement-v1"],
+environment_dictionary = {'IM0'   : ["InvManagement-v0", None],
+             'IM1'   : ["InvManagement-v1", None],
+             'NET0' : ["NetworkManagement-v0", None],
+             'NET1' : ["NetworkManagement-v1", None],
              'NET1_100p' : ["NetworkManagement-v1", 100],  
              'NET1_365p' : ["NetworkManagement-v1", 365],
             }
