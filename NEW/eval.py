@@ -164,6 +164,7 @@ def GetMeanReward(env, model, n_eval_episodes, filepath):
     
     savepath = filepath + 'eval/eval_results.csv'
     
+    
     eval_df.to_csv(savepath, index_label='step')
     return
 
@@ -179,8 +180,8 @@ def Evaluate(env_string=None, alg_string=None, hyper_string=None, **kwargs):
     
     # Change 10 to change how many episodes to evaluate over
     
-    GetMeanReward(env, model, 10, filepath) # Get mean reward for model
     GetData(env, model, 10, filepath) # Get data from the model interacting with the environment
+    GetMeanReward(env, model, 10, filepath) # Get mean reward for model
     
     return
 
