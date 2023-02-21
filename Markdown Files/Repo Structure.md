@@ -33,9 +33,11 @@ Chain RL
 
 # dictionary.py 
 ## Contains:
+```
     - algorithm_dictionary # Add algorithms here
     - environment_dictionary # Add iterations of environments here
     - tuned_params_dictionary (work in progress)
+```
 
 # Naming Structure for New Environment Key/Folder
 ```
