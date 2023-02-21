@@ -15,7 +15,7 @@ from dictionary import algorithm_dictionary # This is a dictionary with the alg
 from dictionary import environment_dictionary # This is a dictionary with the environments and their parameters
 
 
-def GetFilePath(env_string=None, model_string=None, hyper_string='default', **kwargs):
+def get_filepath(env_string=None, model_string=None, hyper_string='default', **kwargs):
     """ Creates a filepath based on the environment, model and hyperparameters passed as arguments
 
     Args:
@@ -28,15 +28,15 @@ def GetFilePath(env_string=None, model_string=None, hyper_string='default', **kw
     """
     
     if hyper_string == 'default':
-        filepath = './Environments/' + env_string + '/' + model_string + '/default/'
+        filepath = 'Environments/' + env_string + '/' + model_string + '/default/'
     
     if hyper_string == 'tuned':
-        filepath = './Environments/' + env_string + '/' + model_string + '/tuned/'
+        filepath = 'Environments/' + env_string + '/' + model_string + '/tuned/'
     
     return filepath
 
 
-def CreateEnv(env_string=None, env_seed=42, **kwargs): 
+def create_env(env_string=None, env_seed=42, **kwargs): 
     """ Creates an environment based on an environment string passed as argument
 
     Args:
