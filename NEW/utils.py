@@ -28,10 +28,10 @@ def get_filepath(env_string=None, model_string=None, hyper_string='default', **k
     """
     
     if hyper_string == 'default':
-        filepath = './Environments/' + env_string + '/' + model_string + '/default/'
+        filepath = 'Environments/' + env_string + '/' + model_string + '/default/'
     
     if hyper_string == 'tuned':
-        filepath = './Environments/' + env_string + '/' + model_string + '/tuned/'
+        filepath = 'Environments/' + env_string + '/' + model_string + '/tuned/'
     
     return filepath
 
