@@ -1,4 +1,4 @@
-# Structure
+# Structure (Click edit for it to look nice)
 
 Chain RL
 │
