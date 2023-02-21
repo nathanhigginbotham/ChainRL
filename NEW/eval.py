@@ -192,7 +192,7 @@ if __name__ == '__main__':
     #### Code here to be executed
     args = parse_args()
     
-    Evaluate(env_string=args.env, alg_string=args.algo, hyper_string='default')
+    #Evaluate(env_string=args.env, alg_string=args.algo, hyper_string='default')
 
     print('0')
 
