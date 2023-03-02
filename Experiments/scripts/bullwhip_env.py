@@ -18,16 +18,16 @@ class BullwhipDist(rv_discrete):
         want to combine a poisson and gaussian-like
         distribution to provide a distribution like
         """
-        self.count = -1
-        self.p = 1
-        self.width = 1
+        self.count = -1                         # No peak
+        self.p = 1                              # Probability of generating a peak
+        self.width = 1                          # Width of the peak
 
     def rvs(self, epsilon, amplitude, sigma):
         if self.count == -1:
-            self.p = np.random.uniform(0, 1)
+            self.p = np.random.uniform(0, 1)            # Probability of generating a peak    
             self.width = np.random.randint(5, 15)
 
-        if self.p < epsilon:
+        if self.p < epsilon:                    # If p is less than epsilon, generate a peak
             self.count += 1
             demand = amplitude * np.exp(
                 -((self.count - self.width / 2) ** 2) / (2 * sigma**2)
@@ -35,8 +35,8 @@ class BullwhipDist(rv_discrete):
             if self.count == self.width:
                 self.count = -1
 
-        if self.p >= epsilon:
-            demand = poisson.rvs(mu=20)
+        if self.p >= epsilon:                  # If p is greater than epsilon, generate a poisson
+            demand = poisson.rvs(mu=20)        # Generate a poisson with mean 20
         return demand
 
 
