@@ -14,9 +14,9 @@ from stable_baselines3.common.env_util import make_vec_env
 from dictionary import algorithm_dictionary # This is a dictionary with the algorithms and their parameters
 from dictionary import environment_dictionary # This is a dictionary with the environments and their parameters
 
-from utils import GetFilePath # Gets file path from environment, model and hyperparameters
+from utils import get_filepath # Gets file path from environment, model and hyperparameters
 
-from utils import CreateEnv # Creates an environment based on an environment string passed as argument
+from utils import create_env # Creates an environment based on an environment string passed as argument
 
 
 
@@ -89,7 +89,7 @@ def parse_args():
 
 
 
-def CreateModel(alg_string=None, env=None, **kwargs): 
+def create_model(alg_string=None, env=None, **kwargs): 
     """ Creates a model based on an algorithm, environment and hyperparameters passed as arguments
 
     Args:
@@ -107,7 +107,7 @@ def CreateModel(alg_string=None, env=None, **kwargs):
     
     return model
 
-def GetCallback(env=None, env_string=None, model_string=None, hyper_string='default',filepath=None, eval_freq=10e3, **kwargs):
+def get_callback(env=None, env_string=None, model_string=None, hyper_string='default',filepath=None, eval_freq=10e3, **kwargs):
     """_summary_
 
     Args:
@@ -147,7 +147,7 @@ def GetCallback(env=None, env_string=None, model_string=None, hyper_string='defa
 #     return Monitor(env, filepath, allow_early_resets=True)
 
 
-def TrainModel(model=None, env=None, total_timesteps=10e3, callback=None, **kwargs): 
+def train_model(model=None, env=None, total_timesteps=10e3, callback=None, **kwargs): 
     """ Trains a model based on an algorithm, environment and hyperparameters passed as arguments.
 
     Args:
@@ -163,7 +163,7 @@ def TrainModel(model=None, env=None, total_timesteps=10e3, callback=None, **kwar
     return model
  
 
-def RunScript(env_string=None, alg_string=None, hyper_string=None, total_timesteps=None, **kwargs):
+def run_script(env_string=None, alg_string=None, hyper_string=None, total_timesteps=None, **kwargs):
     """ Runs the script
 
     Args:
@@ -179,19 +179,19 @@ def RunScript(env_string=None, alg_string=None, hyper_string=None, total_timeste
     filepath = GetFilePath(env_string, alg_string, hyper_string)
     
     # Create environment
-    env = CreateEnv(env_string)
+    env = create_env(env_string)
     
     # env = CreateMonitor(env, env_string, alg_string, hyper_string, **kwargs)
     env = Monitor(env, filename=filepath) 
     
     # Create model
-    model = CreateModel(alg_string, env, **kwargs)
+    model = create_model(alg_string, env, **kwargs)
     
     # Create callback
-    callback = GetCallback(env, env_string, alg_string, hyper_string, filepath, **kwargs)
+    callback = get_callback(env, env_string, alg_string, hyper_string, filepath, **kwargs)
     
     # Train model
-    model = TrainModel(model, env, total_timesteps, callback=callback, **kwargs)
+    model = train_model(model, env, total_timesteps, callback=callback, **kwargs)
     
     return model
 
@@ -218,7 +218,7 @@ if __name__ == '__main__':
     # hyper_string = something
     
     
-    RunScript(args.env, args.algo, hyper_string='default', total_timesteps=args.time)
+    run_script(args.env, args.algo, hyper_string='default', total_timesteps=args.time)
     
     
     print('0')
