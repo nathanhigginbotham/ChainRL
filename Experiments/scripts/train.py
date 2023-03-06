@@ -15,7 +15,6 @@ from dictionary import algorithm_dictionary # This is a dictionary with the alg
 from dictionary import environment_dictionary # This is a dictionary with the environments and their parameters
 
 from utils import get_filepath # Gets file path from environment, model and hyperparameters
-
 from utils import create_env # Creates an environment based on an environment string passed as argument
 
 
@@ -176,7 +175,7 @@ def run_script(env_string=None, alg_string=None, hyper_string=None, total_timest
     """
     
     # Gets the correct filepath for the model's training results
-    filepath = GetFilePath(env_string, alg_string, hyper_string)
+    filepath = get_filepath(env_string, alg_string, hyper_string)
     
     # Create environment
     env = create_env(env_string)
